@@ -1,12 +1,17 @@
 "use strict";
 
+const LOGICAL_WIDTH = 960;
+const LOGICAL_HEIGHT = 540;
 const canvas = document.querySelector("#game");
+canvas.width = LOGICAL_WIDTH;
+canvas.height = LOGICAL_HEIGHT;
+
 const ctx = canvas.getContext("2d");
 const muteButton = document.querySelector("#muteButton");
 ctx.imageSmoothingEnabled = false;
 
-const WIDTH = canvas.width;
-const HEIGHT = canvas.height;
+const WIDTH = LOGICAL_WIDTH;
+const HEIGHT = LOGICAL_HEIGHT;
 const WORLD_WIDTH = 3600;
 const GRAVITY = 1900;
 const MOVE_SPEED = 250;
@@ -29,54 +34,54 @@ const ROBOT_SOLDIER_CROP_BOXES = [
 ];
 
 const ASSETS = {
-  cat: "assets/cat-hero-spritesheet.webp",
-  mouse: "assets/mouse-enemy-spritesheet.webp",
-  warrior: "assets/mouse-warrior-spritesheet.webp",
-  robotSoldier: "assets/cleaned/robot-cat-soldier-spritesheet.webp",
-  drone: "assets/cleaned/drone-enemy-spritesheet.webp",
-  ratCaptain: "assets/cleaned/rat-captain-boss-spritesheet.webp",
-  fish: "assets/fish-pickup-spritesheet.webp",
-  can: "assets/cat-food-can-spritesheet.webp",
-  heart: "assets/heart-pickup-spritesheet.webp",
-  background: "assets/environment/forest/parallax_forest_background.webp",
-  grass: "assets/environment/grassland/grass_ground_tile.webp",
-  dirt: "assets/environment/grassland/dirt_tile.webp",
-  cliff: "assets/environment/grassland/cliff_edge_tile.webp",
-  floating: "assets/environment/grassland/floating_platform_tile.webp",
-  forestTile: "assets/environment/forest/forest_platform_tile.webp",
-  metal: "assets/environment/mecha_castle/metal_fortress_floor_tile.webp",
-  wall: "assets/environment/mecha_castle/steel_wall_tile.webp",
-  hazard: "assets/environment/mecha_castle/hazard_tile.webp",
-  conveyor: "assets/environment/mecha_castle/conveyor_tile.webp",
-  fortressBg: "assets/environment/mecha_castle/parallax_mechanical_fortress_background.webp",
-  flag: "assets/props/checkpoint_flag.webp",
-  sign: "assets/props/signboard.webp",
-  chest: "assets/props/treasure_chest.webp",
-  bush: "assets/props/bush.webp",
-  rock: "assets/props/rock.webp",
-  mushroom: "assets/props/mushroom.webp",
-  lamp: "assets/props/lamp.webp",
-  statue: "assets/props/cat_statue.webp",
-  crate: "assets/props/crate.webp",
-  barrel: "assets/props/barrel.webp",
-  heartIcon: "assets/ui/hp_heart_icon.webp",
-  fishIcon: "assets/ui/fish_counter_icon.webp",
-  canIcon: "assets/ui/cat_can_icon.webp",
-  startButton: "assets/ui/start_button.webp",
-  retryButton: "assets/ui/retry_button.webp",
-  gameOverBanner: "assets/ui/game_over_banner.webp",
-  clearBanner: "assets/ui/stage_clear_banner.webp",
+  cat: "./assets/cat-hero-spritesheet.webp",
+  mouse: "./assets/mouse-enemy-spritesheet.webp",
+  warrior: "./assets/mouse-warrior-spritesheet.webp",
+  robotSoldier: "./assets/cleaned/robot-cat-soldier-spritesheet.webp",
+  drone: "./assets/cleaned/drone-enemy-spritesheet.webp",
+  ratCaptain: "./assets/cleaned/rat-captain-boss-spritesheet.webp",
+  fish: "./assets/fish-pickup-spritesheet.webp",
+  can: "./assets/cat-food-can-spritesheet.webp",
+  heart: "./assets/heart-pickup-spritesheet.webp",
+  background: "./assets/environment/forest/parallax_forest_background.webp",
+  grass: "./assets/environment/grassland/grass_ground_tile.webp",
+  dirt: "./assets/environment/grassland/dirt_tile.webp",
+  cliff: "./assets/environment/grassland/cliff_edge_tile.webp",
+  floating: "./assets/environment/grassland/floating_platform_tile.webp",
+  forestTile: "./assets/environment/forest/forest_platform_tile.webp",
+  metal: "./assets/environment/mecha_castle/metal_fortress_floor_tile.webp",
+  wall: "./assets/environment/mecha_castle/steel_wall_tile.webp",
+  hazard: "./assets/environment/mecha_castle/hazard_tile.webp",
+  conveyor: "./assets/environment/mecha_castle/conveyor_tile.webp",
+  fortressBg: "./assets/environment/mecha_castle/parallax_mechanical_fortress_background.webp",
+  flag: "./assets/props/checkpoint_flag.webp",
+  sign: "./assets/props/signboard.webp",
+  chest: "./assets/props/treasure_chest.webp",
+  bush: "./assets/props/bush.webp",
+  rock: "./assets/props/rock.webp",
+  mushroom: "./assets/props/mushroom.webp",
+  lamp: "./assets/props/lamp.webp",
+  statue: "./assets/props/cat_statue.webp",
+  crate: "./assets/props/crate.webp",
+  barrel: "./assets/props/barrel.webp",
+  heartIcon: "./assets/ui/hp_heart_icon.webp",
+  fishIcon: "./assets/ui/fish_counter_icon.webp",
+  canIcon: "./assets/ui/cat_can_icon.webp",
+  startButton: "./assets/ui/start_button.webp",
+  retryButton: "./assets/ui/retry_button.webp",
+  gameOverBanner: "./assets/ui/game_over_banner.webp",
+  clearBanner: "./assets/ui/stage_clear_banner.webp",
 };
 
 const AUDIO_ASSETS = {
-  bgm: "assets/bgm/stage1.ogg",
-  clear: "assets/se/SE_clear.ogg",
-  damage: "assets/se/SE_damage.ogg",
-  gameover: "assets/se/SE_gameover.ogg",
-  jump: "assets/se/SE_jump.ogg",
-  pickup: "assets/se/SE_pick_fish_can.ogg",
-  recover: "assets/se/SE_recover.ogg",
-  ui: "assets/se/SE_UI.ogg",
+  bgm: "./assets/bgm/stage1.ogg",
+  clear: "./assets/se/SE_clear.ogg",
+  damage: "./assets/se/SE_damage.ogg",
+  gameover: "./assets/se/SE_gameover.ogg",
+  jump: "./assets/se/SE_jump.ogg",
+  pickup: "./assets/se/SE_pick_fish_can.ogg",
+  recover: "./assets/se/SE_recover.ogg",
+  ui: "./assets/se/SE_UI.ogg",
 };
 
 class AudioManager {

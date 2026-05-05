@@ -25,11 +25,11 @@ body {
 
 .game-shell {
   position: relative;
-  width: min(100vw, 1280px);
+  width: min(100vw, calc(100vh * 16 / 9), 960px);
   aspect-ratio: 16 / 9;
-  max-height: 100vh;
   background: var(--frame);
-  border: 6px solid #0b1020;
+  border: 0;
+  outline: 6px solid #0b1020;
   border-radius: 8px;
   box-shadow: 0 22px 70px rgba(0, 0, 0, .42);
   overflow: hidden;
@@ -127,10 +127,8 @@ canvas {
 
 @media (max-width: 720px) {
   .game-shell {
-    width: 100vw;
-    height: 100vh;
-    aspect-ratio: auto;
-    border: 0;
+    width: min(100vw, calc(100vh * 16 / 9));
+    outline: 0;
     border-radius: 0;
   }
 }

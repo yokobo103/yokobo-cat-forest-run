@@ -19,7 +19,20 @@ const JUMP_SPEED = 690;
 const MAX_HP = 5;
 const BGM_VOLUME = 0.35;
 const SE_VOLUME = 0.7;
-const PICKUP_ITEM_SCALE = 2;
+
+const DRAW_SIZES = {
+  player: { w: 112, h: 90, offsetX: -20, offsetY: 0 },
+  mouse: { w: 66, h: 52, offsetX: -6, offsetY: 0 },
+  warrior: { w: 92, h: 72, offsetX: -6, offsetY: 3 },
+  robot: { w: 120, h: 98, offsetX: -15, offsetY: 0 },
+  drone: { w: 72, h: 58, offsetX: -5, offsetY: 4 },
+  boss: { w: 142, h: 116, offsetX: -12, offsetY: 0 },
+  fish: { w: 44, h: 34 },
+  can: { w: 48, h: 36 },
+  heart: { w: 40, h: 36 },
+  titlePlayer: { w: 138, h: 110 },
+  titleMouse: { w: 70, h: 56 },
+};
 
 const ROBOT_SOLDIER_CROP_BOXES = [
   { x: 15, y: 228, w: 226, h: 241 },
@@ -465,31 +478,30 @@ function resetGame() {
   ];
 
   items = [
-    makePickup("fish", 720, 354, 44, 34),
-    makePickup("fish", 1070, 304, 44, 34),
-    makePickup("fish", 1410, 400, 44, 34),
-    makePickup("fish", 2050, 330, 44, 34),
-    makePickup("fish", 2440, 400, 44, 34),
-    makePickup("fish", 2990, 354, 44, 34),
-    makePickup("fish", 3360, 400, 44, 34),
-    makePickup("can", 1630, 390, 48, 36),
-    makePickup("can", 3230, 390, 48, 36),
-    makePickup("heart", 2160, 330, 40, 36),
-    makePickup("heart", 3025, 354, 40, 36),
+    makePickup("fish", 720, 354),
+    makePickup("fish", 1070, 304),
+    makePickup("fish", 1410, 400),
+    makePickup("fish", 2050, 330),
+    makePickup("fish", 2440, 400),
+    makePickup("fish", 2990, 354),
+    makePickup("fish", 3360, 400),
+    makePickup("can", 1630, 390),
+    makePickup("can", 3230, 390),
+    makePickup("heart", 2160, 330),
+    makePickup("heart", 3025, 354),
   ];
 
   cameraX = 0;
 }
 
-function makePickup(type, x, y, w, h) {
-  const scaledW = w * PICKUP_ITEM_SCALE;
-  const scaledH = h * PICKUP_ITEM_SCALE;
+function makePickup(type, x, y) {
+  const size = DRAW_SIZES[type];
   return {
     type,
-    x: x - (scaledW - w) / 2,
-    y: y - (scaledH - h) / 2,
-    w: scaledW,
-    h: scaledH,
+    x,
+    y,
+    w: size.w,
+    h: size.h,
     picked: false,
   };
 }
@@ -721,19 +733,31 @@ function drawEnemies(time) {
     const walk = Math.floor(time / 160);
 
     if (enemy.type === "boss") {
-      drawSpriteFrame(spriteFrames.ratCaptain, walk % 4, enemy.x - 52, enemy.y - 54, 220, 174, enemy.dir < 0);
+      drawEntitySprite(spriteFrames.ratCaptain, walk % 4, enemy, DRAW_SIZES.boss, enemy.dir < 0);
       drawBossHp(enemy);
     } else if (enemy.type === "drone") {
       const bob = Math.sin(time / 260 + enemy.x) * 8;
-      drawSpriteFrame(spriteFrames.drone, walk % 4, enemy.x - 20, enemy.y - 28 + bob, 104, 84, enemy.dir < 0);
+      drawEntitySprite(spriteFrames.drone, walk % 4, enemy, DRAW_SIZES.drone, enemy.dir < 0, bob);
     } else if (enemy.type === "robot") {
-      drawSpriteFrame(spriteFrames.robotSoldier, walk % 4, enemy.x - 100, enemy.y + enemy.h - 235, 290, 235, enemy.dir < 0);
+      drawEntitySprite(spriteFrames.robotSoldier, walk % 4, enemy, DRAW_SIZES.robot, enemy.dir < 0);
     } else if (enemy.type === "warrior") {
-      drawSpriteFrame(spriteFrames.warrior, walk % 4, enemy.x - 22, enemy.y - 20, 120, 90, enemy.dir < 0);
+      drawEntitySprite(spriteFrames.warrior, walk % 4, enemy, DRAW_SIZES.warrior, enemy.dir < 0);
     } else {
-      drawSpriteFrame(spriteFrames.mouse, walk % 4, enemy.x - 16, enemy.y - 20, 88, 70, enemy.dir < 0);
+      drawEntitySprite(spriteFrames.mouse, walk % 4, enemy, DRAW_SIZES.mouse, enemy.dir < 0);
     }
   }
+}
+
+function drawEntitySprite(frames, frame, entity, size, flip = false, yOffset = 0) {
+  drawSpriteFrame(
+    frames,
+    frame,
+    entity.x + size.offsetX,
+    entity.y + entity.h - size.h + size.offsetY + yOffset,
+    size.w,
+    size.h,
+    flip
+  );
 }
 
 function drawBossHp(enemy) {
@@ -755,7 +779,7 @@ function drawPlayer(time) {
   else if (Math.abs(player.vx) > 1) frame = 3 + Math.floor(time / 90) % 7;
   else frame = Math.floor(time / 360) % 3;
 
-  drawSpriteFrame(spriteFrames.cat, frame, player.x - 42, player.y - 56, 150, 120, player.facing < 0);
+  drawEntitySprite(spriteFrames.cat, frame, player, DRAW_SIZES.player, player.facing < 0);
 }
 
 function drawGoal() {
@@ -806,8 +830,8 @@ function drawText(text, x, y, size, color = "#fff", align = "left") {
 function drawTitle(time) {
   drawBackground();
   ctx.drawImage(images.statue, 90, 356, 96, 96);
-  drawSpriteFrame(spriteFrames.cat, 3 + Math.floor(time / 120) % 7, 386, 250, 190, 152);
-  drawSpriteFrame(spriteFrames.mouse, Math.floor(time / 150) % 4, 640, 324, 94, 74);
+  drawSpriteFrame(spriteFrames.cat, 3 + Math.floor(time / 120) % 7, 420, 282, DRAW_SIZES.titlePlayer.w, DRAW_SIZES.titlePlayer.h);
+  drawSpriteFrame(spriteFrames.mouse, Math.floor(time / 150) % 4, 650, 340, DRAW_SIZES.titleMouse.w, DRAW_SIZES.titleMouse.h);
   ctx.drawImage(images.bush, 730, 386, 80, 80);
   drawPanel(255, 88, 450, 166);
   drawText("Cat Forest Run", 480, 145, 46, "#7d341d", "center");

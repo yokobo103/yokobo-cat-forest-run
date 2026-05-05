@@ -1,0 +1,16 @@
+# Local and generated source material
+input/
+prompts/
+tools/
+assets/old/
+assets/sprites/
+assets/environment/environment_report.md
+assets/lp_logo_transparent.PNG
+
+# PNG source images replaced by runtime WebP assets
+assets/**/*.png
+assets/**/*.PNG
+
+# Keep the optimized runtime images and audio
+!assets/**/*.webp
+!assets/**/*.ogg
